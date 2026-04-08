@@ -98,6 +98,43 @@ npm run build
 npm start
 ```
 
+## Deployment
+
+### Backend (Render Web Service)
+
+1. Create a new Render Web Service from your GitHub repo.
+2. Set the following settings:
+   - **Root Directory**: `.` (repository root)
+   - **Build Command**: `npm run prisma:generate && npm run build`
+   - **Start Command**: `npm run prisma:migrate:prod && npm start`
+3. Set environment variables:
+   - `DATABASE_URL`: Your Render PostgreSQL database URL
+   - `JWT_SECRET`: A secure random string
+   - `CLIENT_URL`: Your Vercel frontend URL (e.g., `https://your-app.vercel.app`)
+   - `NODE_ENV`: `production`
+   - `PORT`: `10000` (or Render's default)
+
+### Database (Render PostgreSQL)
+
+1. Create a Render PostgreSQL database.
+2. Copy the `DATABASE_URL` from the database settings.
+
+### Frontend (Vercel)
+
+1. Create a new Vercel project from your GitHub repo.
+2. Set the following settings:
+   - **Root Directory**: `frontend`
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `dist`
+3. Set environment variable:
+   - `VITE_API_BASE_URL`: Your Render backend URL (e.g., `https://your-backend.onrender.com`)
+
+### Custom Domain
+
+1. In Vercel dashboard, go to your project settings.
+2. Add your custom domain in the "Domains" section.
+3. Follow Vercel's instructions to configure DNS.
+
 ## Testing
 
 Run all tests:
