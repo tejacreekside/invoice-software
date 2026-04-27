@@ -362,10 +362,12 @@ svg {
 
 .table-wrapper {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 table {
   width: 100%;
+  min-width: 680px;
   border-collapse: collapse;
   font-size: 0.95rem;
 }
@@ -698,11 +700,54 @@ tr:last-child td {
     grid-template-columns: 1fr;
   }
   .sidebar {
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: flex-start;
-    padding: 24px;
+    position: static;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 18px 24px;
     min-height: auto;
+  }
+  .sidebar-brand {
+    gap: 2px;
+  }
+  .brand {
+    font-size: 1.25rem;
+  }
+  .brand-subtitle {
+    display: none;
+  }
+  .sidebar-nav {
+    order: 3;
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .nav-link {
+    flex: 0 0 auto;
+    border-radius: 14px;
+    padding: 10px 14px;
+    white-space: nowrap;
+  }
+  .sidebar-user {
+    flex-direction: row;
+    align-items: center;
+    margin-top: 0;
+    min-width: 0;
+  }
+  .user-profile-button {
+    width: auto;
+    max-width: 260px;
+    padding: 10px 12px;
+    border-radius: 14px;
+  }
+  .sidebar-user .logout-button {
+    width: auto;
+    padding: 10px 12px;
   }
   .main-content {
     padding: 28px 24px;
@@ -718,9 +763,127 @@ tr:last-child td {
   .line-item-row {
     grid-template-columns: 1fr;
   }
+  .dashboard-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 720px) {
+  :root {
+    font-size: 15px;
+  }
+  body {
+    background: var(--surface-soft);
+  }
+  .sidebar {
+    padding: 14px 14px 12px;
+    gap: 12px;
+  }
+  .brand {
+    font-size: 1.05rem;
+    letter-spacing: 0.04em;
+  }
+  .sidebar-nav {
+    gap: 8px;
+  }
+  .nav-link {
+    padding: 9px 12px;
+    font-size: 0.92rem;
+  }
+  .user-avatar {
+    width: 34px;
+    height: 34px;
+  }
+  .user-profile-button {
+    max-width: 150px;
+    gap: 8px;
+    padding: 8px;
+  }
+  .user-email {
+    display: none;
+  }
+  .user-name {
+    max-width: 82px;
+    font-size: 0.88rem;
+  }
+  .sidebar-user .logout-button {
+    padding: 8px 10px;
+    font-size: 0.88rem;
+  }
+  .main-content {
+    padding: 18px 14px 28px;
+  }
+  .page-shell {
+    gap: 18px;
+  }
+  .page-header {
+    gap: 12px;
+  }
+  .page-header h1 {
+    font-size: 1.7rem;
+  }
+  .page-header p {
+    margin-top: 6px;
+  }
+  .section-heading {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .card,
+  .panel,
+  .panel.full-width,
+  .metric-card,
+  .login-card {
+    border-radius: 18px;
+    padding: 18px;
+  }
+  .card-header {
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+  .panel-grid,
+  .form-grid,
+  .grid-two-columns {
+    gap: 14px;
+  }
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .metric-card {
+    min-height: auto;
+  }
+  .metric-card strong {
+    font-size: 1.45rem;
+  }
+  .form-grid input,
+  .form-grid select,
+  .form-grid textarea,
+  .form-field input,
+  .form-field select,
+  .form-field textarea {
+    border-radius: 14px;
+    padding: 12px 14px;
+  }
+  .upload-area {
+    border-radius: 16px;
+    padding: 18px;
+  }
+  .line-item-total {
+    border-radius: 14px;
+  }
+  .login-page {
+    padding: 18px;
+  }
+  .info-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+  th,
+  td {
+    padding: 12px 10px;
+  }
   .button,
   .primary-button,
   .secondary-button {
