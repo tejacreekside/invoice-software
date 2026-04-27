@@ -85,7 +85,17 @@ router.get('/:id', async (req: AuthenticatedRequest, res: Response): Promise<voi
       where: { id },
       include: {
         customer: true,
-        user: true,
+        user: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            businessName: true,
+            businessEmail: true,
+            businessPhone: true,
+            businessAddress: true,
+          },
+        },
         items: {
           include: {
             product: true,
@@ -185,7 +195,7 @@ router.post('/', async (req: AuthenticatedRequest, res: Response): Promise<void>
     }
 
     // Validate customer exists
-    const customer = await prisma.customer.findUnique({ where: { id: customerId } });
+    const customer = await prisma.customer.findFirst({ where: { id: customerId, userId: req.user!.userId } });
     if (!customer) {
       res.status(404).json({ error: 'Customer not found' });
       return;
@@ -194,7 +204,7 @@ router.post('/', async (req: AuthenticatedRequest, res: Response): Promise<void>
     // Calculate totals
     const calculatedItems = await Promise.all(
       items.map(async (item) => {
-        const product = await prisma.product.findUnique({ where: { id: item.productId } });
+        const product = await prisma.product.findFirst({ where: { id: item.productId, userId: req.user!.userId } });
         if (!product) {
           throw new Error(`Product ${item.productId} not found`);
         }
@@ -365,7 +375,7 @@ router.put('/:id', async (req: AuthenticatedRequest, res: Response): Promise<voi
 
       const calculatedItems = await Promise.all(
         items.map(async (item) => {
-          const product = await prisma.product.findUnique({ where: { id: item.productId } });
+          const product = await prisma.product.findFirst({ where: { id: item.productId, userId: req.user!.userId } });
           if (!product) {
             throw new Error(`Product ${item.productId} not found`);
           }

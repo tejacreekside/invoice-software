@@ -16,7 +16,16 @@ router.get('/', async (req, res) => {
 
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { id: true, email: true, name: true, avatar: true }
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        avatar: true,
+        businessName: true,
+        businessEmail: true,
+        businessPhone: true,
+        businessAddress: true,
+      }
     });
 
     if (!user) {
@@ -27,6 +36,39 @@ router.get('/', async (req, res) => {
   } catch (error) {
     console.error('Profile fetch error:', error);
     res.status(500).json({ error: 'Failed to fetch profile' });
+  }
+});
+
+// Update business profile details used on printable invoices
+router.put('/', async (req, res) => {
+  try {
+    const userId = (req as any).user.userId;
+    const { businessName, businessEmail, businessPhone, businessAddress } = req.body;
+
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        businessName: businessName || null,
+        businessEmail: businessEmail || null,
+        businessPhone: businessPhone || null,
+        businessAddress: businessAddress || null,
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        avatar: true,
+        businessName: true,
+        businessEmail: true,
+        businessPhone: true,
+        businessAddress: true,
+      }
+    });
+
+    res.json({ user: updatedUser });
+  } catch (error) {
+    console.error('Profile update error:', error);
+    res.status(500).json({ error: 'Failed to update profile' });
   }
 });
 
@@ -50,7 +92,16 @@ router.post('/avatar', fileUploadService.getAvatarUpload().single('avatar'), asy
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: { avatar: avatarPath },
-      select: { id: true, email: true, name: true, avatar: true }
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        avatar: true,
+        businessName: true,
+        businessEmail: true,
+        businessPhone: true,
+        businessAddress: true,
+      }
     });
 
     res.json({
@@ -92,7 +143,17 @@ router.get('/profile', async (req, res) => {
 
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { id: true, email: true, name: true, avatar: true, createdAt: true }
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        avatar: true,
+        businessName: true,
+        businessEmail: true,
+        businessPhone: true,
+        businessAddress: true,
+        createdAt: true,
+      }
     });
 
     if (!user) {

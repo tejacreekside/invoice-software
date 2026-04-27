@@ -26,6 +26,7 @@ interface CreateCustomerRequest {
 router.get('/', async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     const customers = await prisma.customer.findMany({
+      where: { userId: req.user!.userId },
       orderBy: { createdAt: 'desc' },
     });
     res.json(customers);
@@ -43,8 +44,8 @@ router.get('/:id', async (req: AuthenticatedRequest, res: Response): Promise<voi
   try {
     const { id } = req.params;
 
-    const customer = await prisma.customer.findUnique({
-      where: { id },
+    const customer = await prisma.customer.findFirst({
+      where: { id, userId: req.user!.userId },
     });
 
     if (!customer) {
@@ -85,6 +86,7 @@ router.post('/', async (req: AuthenticatedRequest, res: Response): Promise<void>
 
     const customer = await prisma.customer.create({
       data: {
+        userId: req.user!.userId,
         name,
         email: email || null,
         phone: phone || null,
@@ -125,6 +127,15 @@ router.put('/:id', async (req: AuthenticatedRequest, res: Response): Promise<voi
       }
     }
 
+    const existingCustomer = await prisma.customer.findFirst({
+      where: { id, userId: req.user!.userId },
+    });
+
+    if (!existingCustomer) {
+      res.status(404).json({ error: 'Customer not found' });
+      return;
+    }
+
     const customer = await prisma.customer.update({
       where: { id },
       data: {
@@ -162,8 +173,17 @@ router.delete('/:id', async (req: AuthenticatedRequest, res: Response): Promise<
   try {
     const { id } = req.params;
 
+    const existingCustomer = await prisma.customer.findFirst({
+      where: { id, userId: req.user!.userId },
+    });
+
+    if (!existingCustomer) {
+      res.status(404).json({ error: 'Customer not found' });
+      return;
+    }
+
     // Check if customer has invoices
-    const invoiceCount = await prisma.invoice.count({ where: { customerId: id } });
+    const invoiceCount = await prisma.invoice.count({ where: { customerId: id, userId: req.user!.userId } });
     if (invoiceCount > 0) {
       res.status(400).json({ error: 'Cannot delete customer with existing invoices' });
       return;

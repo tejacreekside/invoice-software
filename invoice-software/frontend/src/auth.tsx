@@ -6,6 +6,10 @@ interface User {
   email: string;
   name: string;
   avatar?: string | null;
+  businessName?: string | null;
+  businessEmail?: string | null;
+  businessPhone?: string | null;
+  businessAddress?: string | null;
 }
 
 interface AuthContextValue {

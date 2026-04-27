@@ -24,7 +24,7 @@ export const authApi = {
 
 export const customerApi = {
   list: () => api.get('/customers'),
-  create: (data: { name: string; email?: string; phone?: string; city?: string; state?: string; country?: string }) => api.post('/customers', data),
+  create: (data: { name: string; email?: string; phone?: string; address?: string; city?: string; state?: string; zipCode?: string; country?: string }) => api.post('/customers', data),
 };
 
 export const productApi = {
@@ -34,6 +34,7 @@ export const productApi = {
 
 export const profileApi = {
   getProfile: () => api.get('/profile'),
+  updateProfile: (data: { businessName?: string; businessEmail?: string; businessPhone?: string; businessAddress?: string }) => api.put('/profile', data),
   uploadAvatar: (formData: FormData) => api.post('/profile/avatar', formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   }),

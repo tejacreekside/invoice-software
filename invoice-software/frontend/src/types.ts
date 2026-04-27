@@ -36,6 +36,10 @@ export interface Invoice {
     id: string;
     email: string;
     name: string;
+    businessName?: string | null;
+    businessEmail?: string | null;
+    businessPhone?: string | null;
+    businessAddress?: string | null;
   };
   status: string;
   issueDate: string;

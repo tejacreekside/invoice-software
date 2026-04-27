@@ -23,6 +23,7 @@ interface CreateProductRequest {
 router.get('/', async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     const products = await prisma.product.findMany({
+      where: { userId: req.user!.userId },
       orderBy: { createdAt: 'desc' },
     });
     res.json(products);
@@ -40,8 +41,8 @@ router.get('/:id', async (req: AuthenticatedRequest, res: Response): Promise<voi
   try {
     const { id } = req.params;
 
-    const product = await prisma.product.findUnique({
-      where: { id },
+    const product = await prisma.product.findFirst({
+      where: { id, userId: req.user!.userId },
     });
 
     if (!product) {
@@ -88,6 +89,7 @@ router.post('/', async (req: AuthenticatedRequest, res: Response): Promise<void>
 
     const product = await prisma.product.create({
       data: {
+        userId: req.user!.userId,
         name,
         description: description || null,
         unitPrice,
@@ -141,6 +143,15 @@ router.put('/:id', async (req: AuthenticatedRequest, res: Response): Promise<voi
       }
     }
 
+    const existingProduct = await prisma.product.findFirst({
+      where: { id, userId: req.user!.userId },
+    });
+
+    if (!existingProduct) {
+      res.status(404).json({ error: 'Product not found' });
+      return;
+    }
+
     const product = await prisma.product.update({
       where: { id },
       data: {
@@ -175,8 +186,19 @@ router.delete('/:id', async (req: AuthenticatedRequest, res: Response): Promise<
   try {
     const { id } = req.params;
 
+    const existingProduct = await prisma.product.findFirst({
+      where: { id, userId: req.user!.userId },
+    });
+
+    if (!existingProduct) {
+      res.status(404).json({ error: 'Product not found' });
+      return;
+    }
+
     // Check if product is used in any invoices
-    const invoiceItemCount = await prisma.invoiceItem.count({ where: { productId: id } });
+    const invoiceItemCount = await prisma.invoiceItem.count({
+      where: { productId: id, invoice: { userId: req.user!.userId } },
+    });
     if (invoiceItemCount > 0) {
       res.status(400).json({ error: 'Cannot delete product used in invoices' });
       return;

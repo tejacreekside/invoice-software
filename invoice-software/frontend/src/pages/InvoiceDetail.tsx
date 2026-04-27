@@ -28,8 +28,11 @@ function formatAddress(invoice: Invoice): string {
 export default function InvoiceDetailPage() {
   const { id } = useParams();
   const [invoice, setInvoice] = useState<Invoice | null>(null);
+  const [paymentAmount, setPaymentAmount] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [savingAction, setSavingAction] = useState(false);
 
   useEffect(() => {
     if (!id) {
@@ -50,6 +53,50 @@ export default function InvoiceDetailPage() {
     if (invoice.balanceDue <= 0) return 'Paid in full';
     return `Due by ${formatDate(invoice.dueDate)}`;
   }, [invoice]);
+
+  const refreshInvoice = async () => {
+    if (!id) return;
+    const response = await invoiceApi.get(id);
+    setInvoice(response.data);
+  };
+
+  const handleStatusChange = async (status: string) => {
+    if (!invoice) return;
+    setSavingAction(true);
+    setError(null);
+    setSuccess(null);
+
+    try {
+      const response = await invoiceApi.updateStatus(invoice.id, status);
+      setInvoice(response.data);
+      await refreshInvoice();
+      setSuccess(`Invoice marked ${status}.`);
+    } catch (error: any) {
+      setError(error.response?.data?.error || 'Could not update invoice status.');
+    } finally {
+      setSavingAction(false);
+    }
+  };
+
+  const handlePaymentSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!invoice) return;
+    setSavingAction(true);
+    setError(null);
+    setSuccess(null);
+
+    try {
+      const response = await invoiceApi.addPayment(invoice.id, Number(paymentAmount));
+      setInvoice(response.data);
+      await refreshInvoice();
+      setPaymentAmount('');
+      setSuccess('Payment recorded.');
+    } catch (error: any) {
+      setError(error.response?.data?.error || 'Could not record payment.');
+    } finally {
+      setSavingAction(false);
+    }
+  };
 
   if (loading) {
     return <div className="page-shell">Loading invoice...</div>;
@@ -83,6 +130,40 @@ export default function InvoiceDetailPage() {
         </div>
       </div>
 
+      <section className="invoice-management-panel invoice-screen-actions">
+        <div>
+          <h2>Invoice controls</h2>
+          <p>Update status or record a customer payment.</p>
+        </div>
+        <div className="invoice-control-grid">
+          <div className="invoice-status-actions">
+            <Button type="button" variant="secondary" disabled={savingAction || invoice.status !== 'draft'} onClick={() => handleStatusChange('sent')}>
+              Mark sent
+            </Button>
+            <Button type="button" variant="ghost" disabled={savingAction || invoice.status === 'cancelled' || invoice.status === 'paid'} onClick={() => handleStatusChange('cancelled')}>
+              Cancel invoice
+            </Button>
+          </div>
+          <form onSubmit={handlePaymentSubmit} className="invoice-payment-form">
+            <input
+              type="number"
+              min="0.01"
+              step="0.01"
+              value={paymentAmount}
+              onChange={(event) => setPaymentAmount(event.target.value)}
+              placeholder="Payment amount"
+              disabled={savingAction || invoice.balanceDue <= 0 || invoice.status === 'cancelled'}
+              required
+            />
+            <Button type="submit" variant="primary" disabled={savingAction || invoice.balanceDue <= 0 || invoice.status === 'cancelled'}>
+              Record payment
+            </Button>
+          </form>
+        </div>
+        {error && <div className="error-message">{error}</div>}
+        {success && <div className="success-message">{success}</div>}
+      </section>
+
       <article className="invoice-document" aria-label={`Invoice ${invoice.invoiceNumber}`}>
         <header className="invoice-document-header">
           <div>
@@ -99,8 +180,10 @@ export default function InvoiceDetailPage() {
         <section className="invoice-meta-grid">
           <div className="invoice-party">
             <span>Bill from</span>
-            <strong>{invoice.user?.name || 'InvoicePro User'}</strong>
-            <p>{invoice.user?.email || 'Email not provided'}</p>
+            <strong>{invoice.user?.businessName || invoice.user?.name || 'InvoicePro User'}</strong>
+            <p>{invoice.user?.businessEmail || invoice.user?.email || 'Email not provided'}</p>
+            {invoice.user?.businessPhone && <p>{invoice.user.businessPhone}</p>}
+            {invoice.user?.businessAddress && <p>{invoice.user.businessAddress}</p>}
           </div>
           <div className="invoice-party">
             <span>Bill to</span>

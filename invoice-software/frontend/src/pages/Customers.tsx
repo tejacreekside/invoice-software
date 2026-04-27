@@ -9,8 +9,10 @@ const initialForm = {
   name: '',
   email: '',
   phone: '',
+  address: '',
   city: '',
   state: '',
+  zipCode: '',
   country: '',
 };
 
@@ -35,8 +37,10 @@ export default function CustomersPage() {
         name: form.name,
         email: form.email || undefined,
         phone: form.phone || undefined,
+        address: form.address || undefined,
         city: form.city || undefined,
         state: form.state || undefined,
+        zipCode: form.zipCode || undefined,
         country: form.country || undefined,
       });
       setCustomers((current) => [response.data, ...current]);
@@ -71,11 +75,17 @@ export default function CustomersPage() {
             <FormField label="Phone" optional>
               <input value={form.phone} onChange={(event) => setForm({ ...form, phone: event.target.value })} />
             </FormField>
+            <FormField label="Address" optional>
+              <input value={form.address} onChange={(event) => setForm({ ...form, address: event.target.value })} />
+            </FormField>
             <FormField label="City" optional>
               <input value={form.city} onChange={(event) => setForm({ ...form, city: event.target.value })} />
             </FormField>
             <FormField label="State" optional>
               <input value={form.state} onChange={(event) => setForm({ ...form, state: event.target.value })} />
+            </FormField>
+            <FormField label="ZIP" optional>
+              <input value={form.zipCode} onChange={(event) => setForm({ ...form, zipCode: event.target.value })} />
             </FormField>
             <FormField label="Country" optional>
               <input value={form.country} onChange={(event) => setForm({ ...form, country: event.target.value })} />
@@ -109,7 +119,7 @@ export default function CustomersPage() {
                       <td>{customer.name}</td>
                       <td>{customer.email || '—'}</td>
                       <td>{customer.phone || '—'}</td>
-                      <td>{[customer.city, customer.state, customer.country].filter(Boolean).join(', ') || '—'}</td>
+                      <td>{[customer.address, customer.city, customer.state, customer.zipCode, customer.country].filter(Boolean).join(', ') || '—'}</td>
                     </tr>
                   ))
                 )}
