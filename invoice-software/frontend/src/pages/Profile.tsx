@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../auth';
-import { profileApi } from '../api';
+import { API_BASE_URL, profileApi } from '../api';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 
@@ -95,7 +95,7 @@ export default function ProfilePage() {
             <div className="current-avatar">
               {user?.avatar ? (
                 <img
-                  src={`http://localhost:3000${user.avatar}`}
+                  src={`${API_BASE_URL}${user.avatar}`}
                   alt="Current avatar"
                   className="avatar-preview"
                 />

@@ -1,5 +1,6 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth';
+import { API_BASE_URL } from '../api';
 
 const navItems = [
   { path: '/invoices', label: 'Invoices' },
@@ -50,7 +51,7 @@ export default function Layout() {
             <div className="user-avatar">
               {user?.avatar ? (
                 <img
-                  src={`http://localhost:3000${user.avatar}`}
+                  src={`${API_BASE_URL}${user.avatar}`}
                   alt={user.name}
                   className="avatar-image"
                 />

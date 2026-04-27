@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { picturedInvoicesApi } from '../api';
+import { API_BASE_URL, picturedInvoicesApi } from '../api';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import { StatusBadge } from '../components/ui/Badge';
@@ -140,7 +140,7 @@ export default function PicturedInvoicesPage() {
                     <tr key={invoice.id}>
                       <td>
                         <img
-                          src={`http://localhost:3000${invoice.filePath}`}
+                          src={`${API_BASE_URL}${invoice.filePath}`}
                           alt="Invoice"
                           style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '8px' }}
                         />
