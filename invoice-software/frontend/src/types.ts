@@ -32,6 +32,11 @@ export interface Invoice {
   id: string;
   invoiceNumber: string;
   customer: Customer;
+  user?: {
+    id: string;
+    email: string;
+    name: string;
+  };
   status: string;
   issueDate: string;
   dueDate: string;

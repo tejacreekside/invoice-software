@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { customerApi, invoiceApi, productApi } from '../api';
 import { Customer, Product, InvoiceItem } from '../types';
 import Card from '../components/ui/Card';
@@ -12,6 +13,7 @@ function roundToTwo(value: number): number {
 }
 
 export default function CreateInvoicePage() {
+  const navigate = useNavigate();
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [customerId, setCustomerId] = useState('');
@@ -80,13 +82,14 @@ export default function CreateInvoicePage() {
         notes: notes || undefined,
       };
 
-      await invoiceApi.create(payload);
+      const response = await invoiceApi.create(payload);
       setSuccess('Invoice created successfully.');
       setCustomerId('');
       setItems([{ ...initialItem }]);
       setNotes('');
       setDiscountAmount('0');
       setTaxRate('0.08');
+      navigate(`/invoices/${response.data.id}`);
     } catch (caught) {
       setError('Failed to create invoice. Please verify required fields.');
     } finally {

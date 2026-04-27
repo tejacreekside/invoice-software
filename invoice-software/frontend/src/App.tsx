@@ -4,6 +4,7 @@ import CustomersPage from './pages/Customers';
 import ProductsPage from './pages/Products';
 import InvoicesPage from './pages/Invoices';
 import CreateInvoicePage from './pages/CreateInvoice';
+import InvoiceDetailPage from './pages/InvoiceDetail';
 import LoginPage from './pages/Login';
 import SignupPage from './pages/Signup';
 import PicturedInvoicesPage from './pages/PicturedInvoices';
@@ -36,6 +37,7 @@ export default function App() {
           <Route path="customers" element={<CustomersPage />} />
           <Route path="products" element={<ProductsPage />} />
           <Route path="invoices" element={<InvoicesPage />} />
+          <Route path="invoices/:id" element={<InvoiceDetailPage />} />
           <Route path="invoices/create" element={<CreateInvoicePage />} />
           <Route path="pictured-invoices" element={<PicturedInvoicesPage />} />
           <Route path="profile" element={<ProfilePage />} />

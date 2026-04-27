@@ -62,12 +62,13 @@ export default function InvoicesPage() {
                 <th>Due</th>
                 <th>Total</th>
                 <th>Balance</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
               {invoices.length === 0 ? (
                 <tr>
-                  <td colSpan={6}>No invoices found.</td>
+                  <td colSpan={7}>No invoices found.</td>
                 </tr>
               ) : (
                 invoices.map((invoice) => (
@@ -80,6 +81,11 @@ export default function InvoicesPage() {
                     <td>{new Date(invoice.dueDate).toLocaleDateString()}</td>
                     <td>${invoice.total.toFixed(2)}</td>
                     <td>${invoice.balanceDue.toFixed(2)}</td>
+                    <td>
+                      <Link to={`/invoices/${invoice.id}`} className="table-action-link">
+                        View bill
+                      </Link>
+                    </td>
                   </tr>
                 ))
               )}
