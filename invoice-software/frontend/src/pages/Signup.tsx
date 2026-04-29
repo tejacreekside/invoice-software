@@ -11,12 +11,14 @@ export default function SignupPage() {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const { setToken, setUser } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
+    setLoading(true);
 
     try {
       const response = await authApi.signup(email, password, name);
@@ -31,6 +33,8 @@ export default function SignupPage() {
       navigate('/invoices');
     } catch (error: any) {
       setError(error.response?.data?.error || 'Signup failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -48,6 +52,7 @@ export default function SignupPage() {
               type="text"
               value={name}
               onChange={(event) => setName(event.target.value)}
+              disabled={loading}
               required
             />
           </FormField>
@@ -56,6 +61,7 @@ export default function SignupPage() {
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
+              disabled={loading}
               required
             />
           </FormField>
@@ -64,13 +70,15 @@ export default function SignupPage() {
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
+              disabled={loading}
               required
               minLength={8}
             />
           </FormField>
+          {loading && <div className="auth-progress">Creating your account. This can take a moment on the first load.</div>}
           {error && <div className="error-message">{error}</div>}
-          <Button type="submit" variant="primary" fullWidth>
-            Create account
+          <Button type="submit" variant="primary" fullWidth disabled={loading}>
+            {loading ? 'Creating account...' : 'Create account'}
           </Button>
         </form>
         <p className="hint">
